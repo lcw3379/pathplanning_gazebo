@@ -1,0 +1,34 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/lsky/ros2_ws/ros2_test/build/ydlidar_x4_example",
+        "/home/lsky/ros2_ws/ros2_test/install/ydlidar_x4_example/lib/python3.10/site-packages",
+        "/home/lsky/ros2_ws/ros2_test/build/ur_connect",
+        "/home/lsky/ros2_ws/ros2_test/install/ur_connect/lib/python3.10/site-packages",
+        "/home/lsky/franka_ros2_ws/install/franka_gripper/local/lib/python3.10/dist-packages",
+        "/home/lsky/franka_ros2_ws/install/franka_msgs/local/lib/python3.10/dist-packages",
+        "/home/lsky/robot_ws/build/nav_project",
+        "/home/lsky/robot_ws/install/nav_project/lib/python3.10/site-packages",
+        "/home/lsky/robot_ws/build/mycam",
+        "/home/lsky/robot_ws/install/mycam/lib/python3.10/site-packages",
+        "/home/lsky/robot_ws/build/my_first_ros_rclpy_pkg",
+        "/home/lsky/robot_ws/install/my_first_ros_rclpy_pkg/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/lsky/ros2_ws/ros2_test/build/ydlidar_x4_example",
+        "/home/lsky/ros2_ws/ros2_test/install/ydlidar_x4_example/lib/python3.10/site-packages",
+        "/home/lsky/ros2_ws/ros2_test/build/ur_connect",
+        "/home/lsky/ros2_ws/ros2_test/install/ur_connect/lib/python3.10/site-packages",
+        "/home/lsky/franka_ros2_ws/install/franka_gripper/local/lib/python3.10/dist-packages",
+        "/home/lsky/franka_ros2_ws/install/franka_msgs/local/lib/python3.10/dist-packages",
+        "/home/lsky/robot_ws/build/nav_project",
+        "/home/lsky/robot_ws/install/nav_project/lib/python3.10/site-packages",
+        "/home/lsky/robot_ws/build/mycam",
+        "/home/lsky/robot_ws/install/mycam/lib/python3.10/site-packages",
+        "/home/lsky/robot_ws/build/my_first_ros_rclpy_pkg",
+        "/home/lsky/robot_ws/install/my_first_ros_rclpy_pkg/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}
