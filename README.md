@@ -17,7 +17,11 @@ Ros의 laserscan 데이터는 센서의 스캔 시작점 angle_min 에서부터 
 
 처음부터 직접 World를 새로 만들어서 cmd_vel로 제어 명령을 넣으려니 로봇의 각속도 제어가 너무 느렸다. 그래서 turtlebot3의 기본 월드에서 먼저 사용법을 익히기로 했다.
 
-dwa는 속도와 각속도를 제어 입력으로 사용하니 기존의 cmd_vel에 명령을 주기가 편했다.
+(명령어 넣기)
+
+로봇의 상태는 odometry, 라이다 데이터는 laserscan으로 구독하고, cmd_vel을 퍼블리싱해서 로봇을 제어한다.
+
+dwa는 속도와 각속도를 제어 입력으로 사용하니 기존의 cmd_vel을 바로 사용하면 됐다.
 
 
 [gazebo1.webm](https://github.com/user-attachments/assets/96f276f8-b743-44b3-80b2-3b66d5cb7d8d)
