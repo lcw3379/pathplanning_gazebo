@@ -14,21 +14,22 @@ import numpy as np
 import math
 import random
 import os
+import time
 
 robot_radius = 0.2
 max_speed = 0.22
 min_speed = -0.22
 max_omega = 300.72 * math.pi / 180.0 # 최대 각속도
-max_a = 4.4
+max_a = 100.0
 max_delta_omega = 600.72 * math.pi / 180.0 # 최대 각가속도
-dt = 0.1
+dt = 0.2
 
-future_time = 2.0
+future_time = 4.0
 
 # 가중치
-alpha = 2.0 # 2?
-beta = 0.01
-gamma = 0.1
+alpha = 2.0 # 위치 가중치
+beta = 0.01 # 충돌 가중치
+gamma = 0.01 # 속도 가중치
 
 
 def distance(a, b):
@@ -70,16 +71,16 @@ class DWANode(Node):
         self.odom_subscriber = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
         # self.scan_subscriber = self.create_subscription(LaserScan, 'scan', self.scan_callback, 10)
         self.goal_subscriber = self.create_subscription(PoseStamped, 'goal', self.goal_callback, 10)
-        self.subscription = self.create_subscription(LaserScan,'/scan',self.laser_callback,10)
+        self.subscription = self.create_subscription(LaserScan,'scan',self.laser_callback,10)
 
 # Best Effort QoS 설정
         qos_profile = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT,depth=10)
-        self.time_subscriber = self.create_subscription(Clock,'/clock',self.clock_callback,qos_profile)
+        self.time_subscriber = self.create_subscription(Clock,'clock',self.clock_callback,qos_profile)
         self.sim_time = None
         self.robot_state = np.array([0.0, 0.0, 0.0, 0.0, 0.0])  # [x, y, v, angle, omega]
-        self.goal = np.array([1.0, -0.5])
+        self.goal = np.array([0.0, -0.5])
         self.obstacles = []
-        self.obstacle_radius = 0.13
+        self.obstacle_radius = 0.15
         self.dt = dt
         self.spawn_request()
         self.previous_time = self.get_clock().now()
@@ -91,13 +92,15 @@ class DWANode(Node):
 
         # 유효한 거리 필터링
         valid_indices = np.isfinite(ranges)
-        ranges = ranges[valid_indices]
-        angles = angles[valid_indices]
+        close_indices = np.where(ranges[valid_indices] < 1.0)[0]
+        ranges = ranges[valid_indices][close_indices]
+        angles = angles[valid_indices][close_indices]
         #print(ranges)
         # (x, y) 좌표로 변환
         #if ranges <= 1.2:
         x = ranges * np.cos(angles)
         y = ranges * np.sin(angles)
+        #print(x)
         points = np.vstack((x, y)).T
 
         # 클러스터링 수행
@@ -193,10 +196,16 @@ class DWANode(Node):
         if distance((self.robot_state[0],self.robot_state[1]),self.goal) < robot_radius: # 새 goal 생성 부분
             print("goal reached.")
             self.delete_request()
+            time.sleep(0.2)
             self.goal = np.array((random.uniform(-0.8,0.8),random.uniform(-0.8,0.8)))
             self.spawn_request()
+            time.sleep(0.2)
             while self.goal[0] >=-0.2 and self.goal[0] <=0.2 and self.goal[1] >=-0.2 and self.goal[1] <=0.2: 
+                self.delete_request()
+                time.sleep(0.2)
                 self.goal = np.array((random.uniform(-0.8,0.8),random.uniform(-0.8,0.8)))
+                self.spawn_request()
+                time.sleep(0.2)
 
         
     def create_dynamic_window(self,robot_states): # 일단은 장애물 말고 동적 제약조건만 가정
@@ -246,7 +255,7 @@ class DWANode(Node):
                     return float('inf')  #궤적이 충돌하면 비용 크게
                 clearance += 1.0 / min(dist_list)
             dist_list = []
-        velocity = trajectory[-1,2]
+        velocity = -trajectory[-1,2]
         ob = alpha * heading + beta * clearance + gamma * velocity
         
         return ob   
@@ -257,14 +266,19 @@ class DWANode(Node):
         dw = self.create_dynamic_window(temp_state)
         sample_list = velocity_sampling(dw)
         best_vw = []
+        is_collied = True
         for sample in sample_list:
             trajectory = self.calc_trajectory(temp_state,sample[0],sample[1])
             ob = self.objective_function(trajectory, end)
             #print(trajectory[-1][0],trajectory[-1][1])
             if min_val > ob:
+                is_collied = False
                 min_val = ob
                 best_trajectory = trajectory
                 best_vw = [sample[0],sample[1]]
+            elif is_collied:
+
+                best_vw = [-0.22, 0.0]
         #print(best_trajectory[-1][0],best_trajectory[-1][1])
         #print(robot_states,", ",best_vw)  
         #robot_states = self.motion(robot_states, best_vw, dt)
