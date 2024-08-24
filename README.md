@@ -1,6 +1,6 @@
-사용환경
-ROS2 HUMBLE
-Python 3.10
+사용환경<br/>
+ROS2 HUMBLE<br/>
+Python 3.10<br/>
 
 Path planning 프로젝트에서 충돌회피를 위한 local planning 알고리즘 중 하나인 dwa 알고리즘을 구현했다.
 
@@ -9,8 +9,6 @@ Path planning 프로젝트에서 충돌회피를 위한 local planning 알고리
 먼저 2D lidar 센서의 Laserscan 데이터를 통한 장애물 인식이 필요했다.
 
 # 1. Obstacle Detection
-
-
 
 시뮬레이션 환경에선 2D Lidar의 laserscan 데이터로 장애물을 인식하는 방법을 먼저 알아야 했다. 
 
