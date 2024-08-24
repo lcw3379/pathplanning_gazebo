@@ -57,17 +57,15 @@ def velocity_sampling(dw):
 class DWANode(Node):
     def __init__(self):
         super().__init__('dwa_node')
-                # 파라미터 선언 및 기본값 설정
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
         self.marker_publisher = self.create_publisher(Marker, 'visualization_marker', 10)
         self.spawn_cli = self.create_client(SpawnEntity, '/spawn_entity')
         self.delete_cli = self.create_client(DeleteEntity, '/delete_entity')
-
-
         while not self.spawn_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Spawn service not available, waiting again...')
         while not self.delete_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Delete service not available, waiting again...')
+            
         self.odom_subscriber = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
         # self.scan_subscriber = self.create_subscription(LaserScan, 'scan', self.scan_callback, 10)
         self.goal_subscriber = self.create_subscription(PoseStamped, 'goal', self.goal_callback, 10)
