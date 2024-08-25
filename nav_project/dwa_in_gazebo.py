@@ -71,7 +71,6 @@ class DWANode(Node):
         self.goal_subscriber = self.create_subscription(PoseStamped, 'goal', self.goal_callback, 10)
         self.subscription = self.create_subscription(LaserScan,'scan',self.laser_callback,10)
 
-# Best Effort QoS 설정
         qos_profile = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT,depth=10)
         self.time_subscriber = self.create_subscription(Clock,'clock',self.clock_callback,qos_profile)
         self.sim_time = None
@@ -101,16 +100,14 @@ class DWANode(Node):
         #print(x)
         points = np.vstack((x, y)).T
 
-        # 클러스터링 수행
         self.cluster_points(points)
-        
-        
-    def cluster_points(self, points): # 클러스터링 원리 알기.
+
+    def cluster_points(self, points): 
         self.obstacles = []
         db = DBSCAN(eps=0.2, min_samples=5).fit(points)
         labels = db.labels_
 
-        # 노이즈 포인트는 -1로 라벨링됨
+        # 노이즈 포인트는 -1로 라벨링.
         unique_labels = set(labels)
         clusters = [points[labels == label] for label in unique_labels if label != -1]
 
@@ -125,9 +122,6 @@ class DWANode(Node):
             self.obstacles.append((math.cos(angle)*centroid[0]-math.sin(angle)*centroid[1]+self.robot_state[0],
                                    math.sin(angle)*centroid[0]+math.cos(angle)*centroid[1]+self.robot_state[1]))       
 
-                
-
-
     def clock_callback(self, msg):
         self.sim_time = msg.clock
         #print(self.sim_time)
@@ -136,8 +130,6 @@ class DWANode(Node):
     def spawn_request(self):
         self.get_logger().info('Spawning circle...')
         request = SpawnEntity.Request()
-
-        # SDF 파일의 경로 설정  
         pkg_share = get_package_share_directory('nav_project')
         sdf_file_path = os.path.join(pkg_share, 'models/circle.sdf')
 
@@ -173,8 +165,6 @@ class DWANode(Node):
         self.robot_state[3] = math.atan2(siny_cosp, cosy_cosp)
         self.robot_state[2] = msg.twist.twist.linear.x
         self.robot_state[4] = msg.twist.twist.angular.z
-
-
 
     def goal_callback(self, msg):
         a = 1
@@ -237,8 +227,6 @@ class DWANode(Node):
             trajectory = np.vstack((trajectory, robot_states))
             time += self.dt
         return trajectory 
-        
-
 
     def objective_function(self,trajectory, end): # 평가 함수. 목적함수가 최소가 되는 v,w쌍 찾기
         heading = distance(trajectory[-1],end)
