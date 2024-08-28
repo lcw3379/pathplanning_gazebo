@@ -106,17 +106,13 @@ class DWANode(Node):
         self.obstacles = []
         db = DBSCAN(eps=0.2, min_samples=5).fit(points)
         labels = db.labels_
-
-        # 노이즈 포인트는 -1로 라벨링.
+        # 노이즈 포인트 -1로.
         unique_labels = set(labels)
         clusters = [points[labels == label] for label in unique_labels if label != -1]
 
-        #self.get_logger().info(f'Number of clusters found: {len(clusters)}')
-
-        # 각 클러스터의 중심 좌표 출력
+        # 각 클러스터의 중심 좌표 입력
         for i, cluster in enumerate(clusters):
-            centroid = np.mean(cluster, axis=0)
-            #self.get_logger().info(f'Cluster {i}: Centroid at {(centroid[0]+self.robot_state[0],centroid[1]+self.robot_state[1])}') 
+            centroid = np.mean(cluster, axis=0) 
             angle = self.robot_state[3]
 
             self.obstacles.append((math.cos(angle)*centroid[0]-math.sin(angle)*centroid[1]+self.robot_state[0],
